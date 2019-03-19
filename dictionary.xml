@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary>
+    <en>
+        <word data="you">bạn</word>
+        <word data="hello">xin chào</word>
+        <word data="game">trò chơi</word>
+        <word data="love">yêu</word>
+        <word data="hate">ghét</word>
+        <word data="family">gia đình</word>
+        <word data="milk">sữa</word>
+        <word data="mouse">chuột</word>
+        <word data="coffee">cà phê</word>
+        <word data="table">cái bàn</word>
+        <word data="chair">cái ghế</word>
+        <word data="paint">quần dài</word>
+        <word data="think">suy nghĩ</word>
+        <word data="forget">quên</word>
+        <word data="like">thích</word>
+        <word data="lie">nói dối</word>
+        <word data="goodbye">tạm biệt</word>
+        <word data="cake">cái bánh</word>
+        <word data="water">nước</word>
+        <word data="fan">cái quạt</word>
+        <word data="pan">cái chảo</word>
+        <word data="t-shirt">áo sơ mi</word>
+        <word data="helmet">nón bảo hiểm</word>
+    </en>
+
+    <vi>
+        <Word data="nhớ">miss</Word>
+        <Word data="bút chì">pencil</Word>
+        <Word data="trình duyệt">browser</Word>
+        <Word data="xe đạp">bike</Word>
+        <Word data="ô tô">car</Word>
+        <Word data="cặp">bag</Word>
+        <Word data="áo mưa">raincoast</Word>
+    </vi>
+</dictionary>
