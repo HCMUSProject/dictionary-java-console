@@ -39,6 +39,10 @@ public class Main {
 //		
 		
 		dic.ReadHistory();
+		
+		dic.PrintHistory();
+		
+		
 	}
 
 }

@@ -323,13 +323,27 @@ public class CDictionary {
 
 
 //	========================== Thong ke tra cuu cac tu ===================================
-//	private boolean SaveAField(String dataDate, String keyWord, int valueWord)
-//	{
-//		if (this._ListDays.containsKey(dataDate) == true)
-//		{
-//			
-//		}
-//	}
+	public void SaveAField(String dataDate, String keyWord, int valueWord)
+	{
+		if (this._ListDays.containsKey(dataDate) == true)
+		{
+			// get duoc TranslatedWords ra ngoai.
+			
+			TranslatedWords listWord = this._ListDays.get(dataDate);
+			
+			listWord.PlusEntryValue(keyWord);
+			
+			this._ListDays.put(dataDate, listWord);
+		}
+		else
+		{
+			TranslatedWords listWord = new TranslatedWords();
+			
+			listWord.AddNewEntryWithValue(keyWord, valueWord);
+			
+			this._ListDays.put(dataDate, listWord);
+		}
+	}
 	
 	
 	public boolean ReadHistory() 
@@ -386,6 +400,8 @@ public class CDictionary {
 								int valueWord = Integer.parseInt(elWord.getTextContent());
 								
 								System.out.println(dataDate + " - " + keyWord + " - " + valueWord );
+								
+								this.SaveAField(dataDate, keyWord, valueWord);
 							}
 						}
 					}
@@ -413,6 +429,20 @@ public class CDictionary {
 	
 	
 //	=================  TEST FUNCTION ================================
+	public void PrintHistory() {
+		for (Entry<String, TranslatedWords> entry : this._ListDays.entrySet())
+		{
+			System.out.println(entry.getKey() + " : ");
+			
+			TreeMap<String, Integer> res = entry.getValue().GetListWord();
+			
+			for (Entry<String, Integer> et : res.entrySet())
+			{
+				System.out.println("- " + et.getKey() + " : " + et.getValue());
+			}
+		}
+	}
+	
 	public void PrintDictionary()
 	{
 		this._getDataToDictionary();
