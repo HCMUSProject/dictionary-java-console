@@ -1,22 +1,31 @@
 package dictionary;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
+
+
+import dictionary.translatewords.TranslatedWords;;
 
 public class CDictionary {
 	public static enum LanguageMode{
@@ -31,9 +40,11 @@ public class CDictionary {
 	// mode = en : en - vi
 	// mode = vi : vi - en
 	
-	private String fileDictionary = "dictionary.xml";
+	private String _fileDictionary = "dictionary.xml";
 	
-	private String fileFavorite = "favorite.xml";
+	private String _fileFavorite = "favorite.xml";
+	
+	private String _fileHistory = "history.xml";
 	
 	private String _mode = "en";
 	
@@ -41,7 +52,13 @@ public class CDictionary {
 	private TreeMap<String, String> _dic = new TreeMap<String, String>();
 	
 	// luu lai cac tu duoc yeu thich
-	private ArrayList<String> _listFavoriteWord = new ArrayList<String>();	
+	private ArrayList<String> _listFavoriteWord = new ArrayList<String>();
+	
+	// la 1 mao luu lai cac ngay.
+	// voi 1 ngay thi luu lai 1 map cac key va value
+	// key la tu da tra trong ngay.
+	// value la so lan tra trong ngay do
+	private TreeMap<String, TranslatedWords> _ListDays = new TreeMap<String, TranslatedWords>();
 	
 	public CDictionary()
 	{
@@ -53,6 +70,7 @@ public class CDictionary {
 		this._listFavoriteWord.add("t");
 	}
 	
+//	 ================================= Thay doi ngon ngu =================================
 	// chon ngon ngu tra cuu
 	public void SetLanguage(LanguageMode mode) {
 		switch (mode) {
@@ -71,7 +89,9 @@ public class CDictionary {
 		
 		this._getDataToDictionary();
 	}
-
+	
+	
+//	====================== Tra cuu va hien thi nghia cua tu ==============================
 	// get du lieu vao treemap tu dien theo ngon ngu
 	private boolean _getDataToDictionary() 
 	{
@@ -83,7 +103,7 @@ public class CDictionary {
 			
 			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 			
-			Document doc = documentBuilder.parse(this.fileDictionary);
+			Document doc = documentBuilder.parse(this._fileDictionary);
 			
 			NodeList nodeList = doc.getElementsByTagName(this._mode);
 			
@@ -146,6 +166,9 @@ public class CDictionary {
 		return res;
 	}
 
+	
+	
+//	============================== Cac tu vung yeu thich ==================================
 	// sap xep danh sach cac tu vung ua thich theo SortType
 	public void SortListFavoriteWords(SortType st)
 	{
@@ -189,7 +212,7 @@ public class CDictionary {
 		{
 			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 			
-			Document doc = documentBuilder.parse(this.fileFavorite);
+			Document doc = documentBuilder.parse(this._fileFavorite);
 			
 			NodeList nodeList = doc.getElementsByTagName("Favorite");
 			
@@ -239,7 +262,155 @@ public class CDictionary {
 		return true;
 	}
 	
-	// ghi 
+	// ghi cac tu yeu thich xuong file xml
+	public boolean WriteFavoriteWordToFile()
+	{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			
+			Document docXML = builder.newDocument();
+			
+			Element rootElement = docXML.createElement("Favorite");
+			
+			for (int i = 0; i < this._listFavoriteWord.size(); i++)
+			{
+				Element wordElement = docXML.createElement("Word");
+				
+				Text textWord = docXML.createTextNode(this._listFavoriteWord.get(i));
+				
+				wordElement.appendChild(textWord);
+				
+				rootElement.appendChild(wordElement);
+			}
+			
+			docXML.appendChild(rootElement);
+			
+			// set output file
+			DOMSource source = new DOMSource(docXML);
+			
+			File outputFile = new File(this._fileFavorite);
+			
+			javax.xml.transform.Result res = new StreamResult(outputFile);
+			
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			
+			Transformer transformer = transformerFactory.newTransformer();
+			
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			
+			transformer.transform(source, res);
+			
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public ArrayList<String> GetListFavoriteWord(){
+		
+//		this._getDataToFavorite();
+		
+		return this._listFavoriteWord;
+	}
+
+
+//	========================== Thong ke tra cuu cac tu ===================================
+//	private boolean SaveAField(String dataDate, String keyWord, int valueWord)
+//	{
+//		if (this._ListDays.containsKey(dataDate) == true)
+//		{
+//			
+//		}
+//	}
+	
+	
+	public boolean ReadHistory() 
+	{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		
+		try {
+			
+			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+			
+			Document doc = documentBuilder.parse(this._fileHistory);
+			
+			NodeList nodeList = doc.getElementsByTagName("History");
+			
+			if (nodeList.getLength() != 1)
+			{
+				return false;
+			}
+			
+			// node Date
+			NodeList ListDate = nodeList.item(0).getChildNodes();
+			
+			if (ListDate.getLength() == 0)
+			{
+				return false;
+			}
+			
+			for (int i = 0; i < ListDate.getLength(); i++)
+			{
+				Node Date = ListDate.item(i);
+				
+				if (Date.getNodeType() == Node.ELEMENT_NODE)
+				{
+					Element elDate = (Element) Date;
+					
+					String dataDate = elDate.getAttribute("data");
+					
+					// kiem tra co cac node con la cac word hay khong
+					
+					NodeList nodeListWord = ListDate.item(i).getChildNodes();
+					
+					if (nodeListWord.getLength() > 0)
+					{
+						for (int j = 0; j < nodeListWord.getLength(); j++)
+						{
+							Node Word = nodeListWord.item(j);
+							
+							if (Word.getNodeType() == Node.ELEMENT_NODE)
+							{
+								Element elWord = (Element) Word;
+								
+								String keyWord = elWord.getAttribute("text");
+								
+								int valueWord = Integer.parseInt(elWord.getTextContent());
+								
+								System.out.println(dataDate + " - " + keyWord + " - " + valueWord );
+							}
+						}
+					}
+					
+				}
+			}
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 	
 //	=================  TEST FUNCTION ================================
 	public void PrintDictionary()
