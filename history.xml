@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <History>
+<Date data="18/02/2019">
+<Word text="hello">3</Word>
+<Word text="you">1</Word>
+</Date>
+<Date data="19/03/2019">
+<Word text="hello">3</Word>
+<Word text="you">1</Word>
+</Date>
 <Date data="21/03/2019">
 <Word text="hello">3</Word>
 <Word text="you">1</Word>

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -554,7 +555,6 @@ public class CDictionary {
 		return ret;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void AddEntryToHistory(Date date, String Word)
 	{
 		for(Entry<Date, TranslatedWords> entry : this._ListDays.entrySet())
@@ -583,7 +583,36 @@ public class CDictionary {
 		
 		this.WriteHistoryToFile();
 	}
-//	=================  TEST FUNCTION ================================
+	
+	public TreeMap<String, Integer> CountTranslatedWords(Date fromDate, Date toDate)
+	{
+		TreeMap<String, Integer> ret = new TreeMap<String, Integer>();
+		
+		TreeMap<Date, TranslatedWords> translatedWordsMap = this.GetTranslatedWordsBetweenTwoDay
+				(fromDate, toDate);
+		
+		for (Entry<Date, TranslatedWords> entry : translatedWordsMap.entrySet())
+		{
+			for (Entry<String, Integer> et : entry.getValue().GetListWord().entrySet())
+			{
+				if (ret.containsKey(et.getKey()) == true)
+				{
+					int value = ret.get(et.getKey());
+					
+					value += et.getValue();
+					
+					ret.put(et.getKey(), value);
+				}
+				else
+				{
+					ret.put(et.getKey(), et.getValue());
+				}
+			}
+		}
+		
+		return ret;
+	}
+	//	=================  TEST FUNCTION ================================
 	public void PrintHistory() {
 		for (Entry<Date, TranslatedWords> entry : this._ListDays.entrySet())
 		{

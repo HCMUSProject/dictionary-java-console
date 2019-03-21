@@ -18,7 +18,7 @@ import dictionary.translatewords.TranslatedWords;
 
 public class Main {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ParseException {
 
 		CDictionary dictionary = new CDictionary();
 
@@ -139,111 +139,108 @@ public class Main {
 				br.readLine();
 				break;
 			case 3:
+				System.out.println("[+] Danh sách các từ yêu thích.");
+				System.out.println("1. A - Z");
+				System.out.println("2. Z - A");
 				
+				int chooseOrder = 1;
+				
+				do {
+					
+					if (chooseOrder != 1 && chooseOrder != 2)
+					{
+						System.out.println("[Lỗi]: Lựa chọn không đúng!");
+					}
+					System.out.print("==> Sắp xếp theo: ");
+					chooseOrder = Integer.parseInt(br.readLine());
+				}
+				while (chooseOrder != 1 && chooseOrder != 2);
+				
+				switch (chooseOrder) {
+					case 1:
+						dictionary.SortListFavoriteWords(SortType.AZ);
+						break;
+					case 2:
+						dictionary.SortListFavoriteWords(SortType.ZA);
+						break;
+				}
+				
+				ArrayList<String> arrayFavoriteWord = dictionary.GetListFavoriteWord();
+				System.out.println("Danh sách các từ vựng yêu thích:");
+				for (int i = 0; i < arrayFavoriteWord.size(); i++)
+				{
+					System.out.println("\t+ " + arrayFavoriteWord.get(i));
+				}
+				
+				// Dung man hinh
+				System.out.println("==> Nhấn phím bất kì để tiếp tục!");
+				br.readLine();
 				break;
 			case 4:
+				// thong ke cac tu da tra cuu giua cac ngay
+				System.out.println("[+] Thống kê tần suất tra cứu:");
 				
+				System.out.print("==> Ngày bắt đầu (dd/MM/yyyy) : ");
+				
+				String strFromDate = br.readLine();
+				
+				Date fromDate = null;
+				
+				try {
+					fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(strFromDate);
+				}
+				catch(ParseException ex)
+				{
+					// ...
+					System.out.println("[Lỗi] Ngày sai định dạng!");
+					// Dung man hinh
+					System.out.println("==> Nhấn phím bất kì để tiếp tục!");
+					br.readLine();
+					continue;
+				}
+				
+				System.out.print("==> Ngày ngày kết thúc (dd/MM/yyyy) : ");
+				
+				String strToDate = br.readLine();
+				
+				Date toDate = null;
+				
+				try {
+					toDate = new SimpleDateFormat("dd/MM/yyyy").parse(strToDate);
+				}
+				catch(ParseException ex)
+				{
+					// ...
+					System.out.println("[Lỗi] Ngày sai định dạng!");
+					// Dung man hinh
+					System.out.println("==> Nhấn phím bất kì để tiếp tục!");
+					br.readLine();
+					continue;
+				}
+				
+				if (fromDate == null || toDate == null)
+				{
+					System.out.println("[Lỗi] Không thể chuyển đổi ngày hoặc ngày không tồn tại!");
+				}
+				else
+				{
+					DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+					
+					TreeMap<String, Integer> countWords = dictionary.CountTranslatedWords(fromDate, toDate);
+					
+					System.out.println("Danh sách các từ vựng được tra từ ngày " + df.format(fromDate) + " đến " + df.format(toDate) + " :");
+					
+					for (Entry<String, Integer> entry : countWords.entrySet())
+					{
+						System.out.println("\t+ '" + entry.getKey() +"' : " + entry.getValue() + " (lần)");
+					}
+				}
+				// Dung man hinh
+				System.out.println("==> Nhấn phím bất kì để tiếp tục!");
+				br.readLine();
 				break;
 			}
-			
 		}
 		while(true);
-		
-		
-		
-//		dic.PrintDictionary();
-//		
-//		dic.SetLanguage(LanguageMode.VI);
-//		
-//		dic.PrintDictionary();
-		
-//		dic.WriteFavoriteWordToFile();
-		
-//		dic.WriteFavoriteWordToFile();
-//		
-		
-//		
-//		
-//		
-//		
-//		dic.SortListFavoriteWords(SortType.AZ);
-//		
-//		ArrayList<String> res = dic.GetListFavoriteWord();
-//	
-//		System.out.println(res.size());
-//		
-//		for (int i = 0 ; i < res.size(); i++)
-//		{
-//			System.out.println(res.get(i));
-//		}
-//		
-		
-//		dic.ReadHistoryFromFile();
-//		
-//		dic.PrintHistory();
-		
-		
-//		System.out.println();
-		
-//		SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
-//		
-//		fmt.format(new Date());
-//		
-//		Date d1;
-//		try {
-//			d1 = fmt.parse("19/03/2019");
-//			
-//			Date d2;
-//			try {
-//				d2 = fmt.parse("22/03/2019");
-//				
-//				if (d1 != null && d2 != null)
-//				{
-//					TreeMap<Date,TranslatedWords> ret = dic.GetTranslatedWordsBetweenTwoDay(d1, d2);
-//					
-//					for (Entry<Date, TranslatedWords> entry : ret.entrySet())
-//					{
-//						System.out.println(entry.getKey() + " : ");
-//						
-//						TreeMap<String, Integer> res = entry.getValue().GetListWord();
-//						
-//						for (Entry<String, Integer> et : res.entrySet())
-//						{
-//							System.out.println("- " + et.getKey() + " : " + et.getValue());
-//						}
-//					}
-//				}
-//			} catch (ParseException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			
-//			
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-		
-		
-		
-		
-//		dic.WriteHistoryToFile();
-		
-		
-//		String startDateString = "06/27/2007";
-//		DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
-//		Date startDate;
-//		try {
-//		    startDate = df.parse(startDateString);
-//		    System.out.println(startDate);
-//		    String newDateString = df.format(startDate);
-//		    System.out.println(newDateString);
-//		} catch (ParseException e) {
-//		    e.printStackTrace();
-//		}
-		
-		
 	}
 }
