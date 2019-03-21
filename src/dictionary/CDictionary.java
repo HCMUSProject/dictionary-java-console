@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -73,7 +72,7 @@ public class CDictionary {
 	
 	public CDictionary()
 	{
-		this._getDataToDictionary();
+		this.GetDataToDictionary();
 		this._getDataToFavorite();
 		this.ReadHistoryFromFile();
 	}
@@ -95,7 +94,7 @@ public class CDictionary {
 		
 		// cap nhat lai SortedMap
 		
-		this._getDataToDictionary();
+		this.GetDataToDictionary();
 	}
 	
 	public LanguageMode GetCurrentLanguage()
@@ -124,7 +123,7 @@ public class CDictionary {
 	
 //	====================== Tra cuu va hien thi nghia cua tu ==============================
 	// get du lieu vao treemap tu dien theo ngon ngu
-	private boolean _getDataToDictionary() 
+	public boolean GetDataToDictionary() 
 	{
 		this._dic.clear();
 		
@@ -612,28 +611,4 @@ public class CDictionary {
 		
 		return ret;
 	}
-	//	=================  TEST FUNCTION ================================
-	public void PrintHistory() {
-		for (Entry<Date, TranslatedWords> entry : this._ListDays.entrySet())
-		{
-			System.out.println(entry.getKey() + " : ");
-			
-			TreeMap<String, Integer> res = entry.getValue().GetListWord();
-			
-			for (Entry<String, Integer> et : res.entrySet())
-			{
-				System.out.println("- " + et.getKey() + " : " + et.getValue());
-			}
-		}
-	}
-	
-	public void PrintDictionary()
-	{
-		this._getDataToDictionary();
-		for (Entry<String, String> entry : this._dic.entrySet())
-		{
-			System.out.println(entry.getKey() + " : " + entry.getValue());
-		}
-	}
-	
 }

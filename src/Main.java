@@ -1,20 +1,19 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import dictionary.CDictionary;
 import dictionary.CDictionary.LanguageMode;
 import dictionary.CDictionary.SortType;
-import dictionary.translatewords.TranslatedWords;
 
 public class Main {
 
@@ -72,13 +71,13 @@ public class Main {
 				}
 				while (chooseLanguage != 1 && chooseLanguage != 2);
 				
-				if (nChoose == 1)
+				if (chooseLanguage == 1)
 				{
 					dictionary.SetLanguage(LanguageMode.EN);
 					System.out.println("[Thông báo] Đã chuyển ngôn ngữ thành Tiếng Anh -> Tiếng Việt");
 				}
 				
-				if (nChoose == 2)
+				if (chooseLanguage == 2)
 				{
 					dictionary.SetLanguage(LanguageMode.VI);
 					System.out.println("[Thông báo] Đã chuyển ngôn ngữ thành Tiếng Việt -> Tiếng Anh");
@@ -91,7 +90,11 @@ public class Main {
 				break;
 			case 2:
 				System.out.println("[+] Tra cứu từ.");
+				
 				dictionary.DisplayCurrentLanguage();
+				
+				// cap nhat lai du lieu
+				dictionary.GetDataToDictionary();
 				
 				System.out.print("==> Nhập từ cần tra: ");
 				
