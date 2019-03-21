@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-
+import comparedatewithouttime.CompareDateWithoutTime;
 import dictionary.translatewords.TranslatedWords;;
 
 public class CDictionary {
@@ -72,63 +72,9 @@ public class CDictionary {
 	
 	public CDictionary()
 	{
-		this._listFavoriteWord.add("b");
-		this._listFavoriteWord.add("a");
-		this._listFavoriteWord.add("g");
-		this._listFavoriteWord.add("c");
-		this._listFavoriteWord.add("d");
-		this._listFavoriteWord.add("t");
-		
-		Date now = new Date();
-		
-		TranslatedWords words = new TranslatedWords();
-		words.AddNewEntryWithValue("abc", 3);
-		words.AddNewEntryWithValue("dyf", 2);
-		words.AddNewEntryWithValue("hello", 5);
-		this._ListDays.put(now, words);
-		
-		
-		
-		
-		SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
-		
-		fmt.format(new Date());
-		
-		Date now2;
-		try {
-			now2 = fmt.parse("20/03/2019");
-			
-			TranslatedWords words2 = new TranslatedWords();
-			words2.AddNewEntryWithValue("new", 1);
-			words2.AddNewEntryWithValue("bye", 2);
-			words2.AddNewEntryWithValue("you", 5);
-			this._ListDays.put(now2, words2);
-			
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		Date now3;
-		try {
-			now3 = fmt.parse("21/03/2019");
-			
-			TranslatedWords words2 = new TranslatedWords();
-			words2.AddNewEntryWithValue("kaka", 3);
-			words2.AddNewEntryWithValue("hihi", 6);
-			words2.AddNewEntryWithValue("you", 3);
-			this._ListDays.put(now3, words2);
-			
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		
+		this._getDataToDictionary();
+		this._getDataToFavorite();
+		this.ReadHistoryFromFile();
 	}
 	
 //	 ================================= Thay doi ngon ngu =================================
@@ -281,8 +227,9 @@ public class CDictionary {
 		{
 			return false;
 		}
-		
-		return this._listFavoriteWord.add(Word);
+		this._listFavoriteWord.add(Word);
+
+		return this.WriteFavoriteWordToFile();
 	}
 	
 	// doc tu file danh sach tu yeu thich
@@ -409,15 +356,16 @@ public class CDictionary {
 //	========================== Thong ke tra cuu cac tu ===================================
 	private void SaveAField(Date dataDate, String keyWord, int valueWord)
 	{
-		if (this._ListDays.containsKey(dataDate) == true)
+		Date dateWithoutTime = CompareDateWithoutTime.GetZeroTimeDate(dataDate);
+		if (this._ListDays.containsKey(dateWithoutTime) == true)
 		{
 			// get duoc TranslatedWords ra ngoai.
 			
-			TranslatedWords listWord = this._ListDays.get(dataDate);
+			TranslatedWords listWord = this._ListDays.get(dateWithoutTime);
 			
 			listWord.PlusEntryValue(keyWord);
 			
-			this._ListDays.put(dataDate, listWord);
+			this._ListDays.put(dateWithoutTime, listWord);
 		}
 		else
 		{
@@ -425,7 +373,7 @@ public class CDictionary {
 			
 			listWord.AddNewEntryWithValue(keyWord, valueWord);
 			
-			this._ListDays.put(dataDate, listWord);
+			this._ListDays.put(dateWithoutTime, listWord);
 		}
 	}
 	
@@ -493,7 +441,7 @@ public class CDictionary {
 								
 								int valueWord = Integer.parseInt(elWord.getTextContent());
 								
-								System.out.println(translatedDate + " - " + keyWord + " - " + valueWord );
+//								System.out.println(translatedDate + " - " + keyWord + " - " + valueWord );
 								
 								this.SaveAField(translatedDate, keyWord, valueWord);
 							}
@@ -538,7 +486,9 @@ public class CDictionary {
 				
 				DateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
 				
-				String newDateString = df.format(entry.getKey());
+				Date dateWithoutTime = entry.getKey();
+				
+				String newDateString = df.format(dateWithoutTime);
 				
 				Date.setAttribute("data", newDateString);
 				
@@ -589,13 +539,49 @@ public class CDictionary {
 
 		for(Entry<Date, TranslatedWords> entry : this._ListDays.entrySet())
 		{
-			if (!(entry.getKey().before(fromDate) || entry.getKey().after(toDate)))
+			Date dateEntry = CompareDateWithoutTime.GetZeroTimeDate(entry.getKey());
+			
+			Date dateFrom = CompareDateWithoutTime.GetZeroTimeDate(fromDate);
+			
+			Date dateTo = CompareDateWithoutTime.GetZeroTimeDate(toDate);
+			
+			if (!(dateEntry.before(dateFrom) || dateEntry.after(dateTo)))
 			{
 				ret.put(entry.getKey(), entry.getValue());
 			}
 		}
 		
 		return ret;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void AddEntryToHistory(Date date, String Word)
+	{
+		for(Entry<Date, TranslatedWords> entry : this._ListDays.entrySet())
+		{
+			// neu giong ngay
+			if (CompareDateWithoutTime.CompareTwoDates(entry.getKey(), date) == 0)
+			{
+				TranslatedWords temp = entry.getValue();
+				
+				temp.PlusEntryValue(Word);
+				
+				this._ListDays.put(entry.getKey(), temp);
+				
+				this.WriteHistoryToFile();
+				
+				return;
+			}
+		}
+		
+		// neu khong co ngay thi them moi
+		TranslatedWords temp = new TranslatedWords();
+		
+		temp.PlusEntryValue(Word);
+		
+		this._ListDays.put(CompareDateWithoutTime.GetZeroTimeDate(date), temp);
+		
+		this.WriteHistoryToFile();
 	}
 //	=================  TEST FUNCTION ================================
 	public void PrintHistory() {

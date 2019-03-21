@@ -39,7 +39,7 @@ public class Main {
 				
 				if (nChoose < 0 || nChoose > 4)
 				{
-					System.out.println("[Warning]: Lựa chọn không đúng!");
+					System.out.println("[Lỗi]: Lựa chọn không đúng!");
 				}
 				System.out.print("==> Lựa chọn: ");
 				nChoose = Integer.parseInt(br.readLine());
@@ -65,7 +65,7 @@ public class Main {
 					
 					if (chooseLanguage != 1 && chooseLanguage != 2)
 					{
-						System.out.println("[Warning]: Lựa chọn không đúng!");
+						System.out.println("[Lỗi]: Lựa chọn không đúng!");
 					}
 					System.out.print("==> Chọn ngôn ngữ:");
 					chooseLanguage = Integer.parseInt(br.readLine());
@@ -75,17 +75,17 @@ public class Main {
 				if (nChoose == 1)
 				{
 					dictionary.SetLanguage(LanguageMode.EN);
-					System.out.println("Đã chuyển ngôn ngữ thành Tiếng Anh -> Tiếng Việt");
+					System.out.println("[Thông báo] Đã chuyển ngôn ngữ thành Tiếng Anh -> Tiếng Việt");
 				}
 				
 				if (nChoose == 2)
 				{
 					dictionary.SetLanguage(LanguageMode.VI);
-					System.out.println("Đã chuyển ngôn ngữ thành Tiếng Việt -> Tiếng Anh");
+					System.out.println("[Thông báo] Đã chuyển ngôn ngữ thành Tiếng Việt -> Tiếng Anh");
 				}
 				
 				// Dung man hinh
-				System.out.println("Nhấn phím bất kì để tiếp tục!");
+				System.out.println("==> Nhấn phím bất kì để tiếp tục!");
 				br.readLine();
 				
 				break;
@@ -93,7 +93,7 @@ public class Main {
 				System.out.println("[+] Tra cứu từ.");
 				dictionary.DisplayCurrentLanguage();
 				
-				System.out.print("Nhập từ cần tra: ");
+				System.out.print("==> Nhập từ cần tra: ");
 				
 				String word = "";
 				
@@ -102,14 +102,40 @@ public class Main {
 				String meaning = dictionary.GetMeaning(word);
 				
 				if (meaning.equals(""))
-					System.out.println("[Warning] Không tìm thấy nghĩa của từ '"+ word +"'");
+					System.out.println("[Thông báo] Không tìm thấy nghĩa của từ '"+ word +"'");
 				else
 				{
-					System.out.println("Nghĩa của từ '" + word + "' là: " + meaning);
+					System.out.println("[Thông báo] Nghĩa của từ '" + word + "' là: " + meaning);
+					
+					// luu tu vao lich su
+					Date dNow = new Date();
+					dictionary.AddEntryToHistory(dNow, word);
+					
+					// luu tu vao danh sach tu vung yeu thich
+					System.out.print("==> Lưu từ '" + word +"' vào danh sách từ vựng yêu thích ? (y/n) ");
+					
+					String save = br.readLine();
+					
+					if (save.equals("y") || save.equals("Y"))
+					{
+						// luu lai tu
+						if (dictionary.SaveFavoriteWord(word) == true)
+						{
+							System.out.println("[Thông báo] Lưu thành công!");
+						}
+						else
+						{
+							System.out.println("[Thông báo] Lưu thất bại. Có vẻ từ đã tồn tại.");
+						}
+					}
+					else
+					{
+						System.out.println("[Thông báo] Không lưu từ '" + word + "' vào danh sách từ yêu thích.");
+					}
 				}
 				
 				// Dung man hinh
-				System.out.println("Nhấn phím bất kì để tiếp tục!");
+				System.out.println("==> Nhấn phím bất kì để tiếp tục!");
 				br.readLine();
 				break;
 			case 3:
@@ -135,7 +161,7 @@ public class Main {
 		
 //		dic.WriteFavoriteWordToFile();
 //		
-//		
+		
 //		
 //		
 //		
