@@ -148,6 +148,9 @@ public class Main {
 				
 				int chooseOrder = 1;
 				
+				// load lai du lieu
+				dictionary.GetDataToFavorite();
+				
 				do {
 					
 					if (chooseOrder != 1 && chooseOrder != 2)
@@ -227,6 +230,9 @@ public class Main {
 				}
 				else
 				{
+					// load lai du lieu
+					dictionary.ReadHistoryFromFile();
+					
 					DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 					
 					TreeMap<String, Integer> countWords = dictionary.CountTranslatedWords(fromDate, toDate);

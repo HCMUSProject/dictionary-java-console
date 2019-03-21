@@ -73,7 +73,7 @@ public class CDictionary {
 	public CDictionary()
 	{
 		this.GetDataToDictionary();
-		this._getDataToFavorite();
+		this.GetDataToFavorite();
 		this.ReadHistoryFromFile();
 	}
 	
@@ -233,7 +233,7 @@ public class CDictionary {
 	}
 	
 	// doc tu file danh sach tu yeu thich
-	private boolean _getDataToFavorite()
+	public boolean GetDataToFavorite()
 	{
 		this._listFavoriteWord.clear();
 		
@@ -361,9 +361,9 @@ public class CDictionary {
 		{
 			// get duoc TranslatedWords ra ngoai.
 			
-			TranslatedWords listWord = this._ListDays.get(dateWithoutTime);
+			TranslatedWords listWord = this._ListDays.get(dateWithoutTime); 
 			
-			listWord.PlusEntryValue(keyWord);
+			listWord.AddNewEntryWithValue(keyWord, valueWord);
 			
 			this._ListDays.put(dateWithoutTime, listWord);
 		}
@@ -380,6 +380,8 @@ public class CDictionary {
 	// doc lich su tra cuu vao TreeSet
 	public boolean ReadHistoryFromFile() 
 	{
+		this._ListDays.clear();
+		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		
 		try {

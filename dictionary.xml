@@ -24,6 +24,8 @@
         <word data="pan">cái chảo</word>
         <word data="t-shirt">áo sơ mi</word>
         <word data="helmet">nón bảo hiểm</word>
+        <word data="car">ô tô</word>
+        <word data="keyboard">bàn phím</word>
     </en>
 
     <vi>
@@ -35,5 +37,22 @@
         <Word data="cặp">bag</Word>
         <Word data="cái bàn">table</Word>
         <Word data="áo mưa">raincoast</Word>
+        <Word data="sách">book</Word>
+        <Word data="sàn nhà">floor</Word>
+        <Word data="máy vi tính">computer</Word>
+        <Word data="môn toán">math</Word>
+        <Word data="cái giường">bed</Word>
+        <Word data="ổ cắm">socket</Word>
+        <Word data="cửa sổ">window</Word>
+        <Word data="cánh cửa">door</Word>
+        <Word data="quả cam">orange</Word>
+        <Word data="đường">street</Word>
+        <Word data="cao tốc">highway</Word>
+        <Word data="tàu lửa">train</Word>
+        <Word data="xe buýt">bus</Word>
+        <Word data="điện thoại">phone</Word>
+        <Word data="máy bay">air plane</Word>
+        <Word data="bóng đá">football</Word>
+        <Word data="cầu">bridge</Word>
     </vi>
 </dictionary>
