@@ -2,10 +2,14 @@ package dictionary;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map.Entry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -58,7 +62,13 @@ public class CDictionary {
 	// voi 1 ngay thi luu lai 1 map cac key va value
 	// key la tu da tra trong ngay.
 	// value la so lan tra trong ngay do
-	private TreeMap<String, TranslatedWords> _ListDays = new TreeMap<String, TranslatedWords>();
+	private TreeMap<Date, TranslatedWords> _ListDays = new TreeMap<Date, TranslatedWords>(
+			new Comparator<Date>() {
+				public int compare(Date d1, Date d2)
+				{
+					return d1.compareTo(d2);
+				}
+			});
 	
 	public CDictionary()
 	{
@@ -68,6 +78,57 @@ public class CDictionary {
 		this._listFavoriteWord.add("c");
 		this._listFavoriteWord.add("d");
 		this._listFavoriteWord.add("t");
+		
+		Date now = new Date();
+		
+		TranslatedWords words = new TranslatedWords();
+		words.AddNewEntryWithValue("abc", 3);
+		words.AddNewEntryWithValue("dyf", 2);
+		words.AddNewEntryWithValue("hello", 5);
+		this._ListDays.put(now, words);
+		
+		
+		
+		
+		SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+		
+		fmt.format(new Date());
+		
+		Date now2;
+		try {
+			now2 = fmt.parse("20/03/2019");
+			
+			TranslatedWords words2 = new TranslatedWords();
+			words2.AddNewEntryWithValue("new", 1);
+			words2.AddNewEntryWithValue("bye", 2);
+			words2.AddNewEntryWithValue("you", 5);
+			this._ListDays.put(now2, words2);
+			
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		Date now3;
+		try {
+			now3 = fmt.parse("21/03/2019");
+			
+			TranslatedWords words2 = new TranslatedWords();
+			words2.AddNewEntryWithValue("kaka", 3);
+			words2.AddNewEntryWithValue("hihi", 6);
+			words2.AddNewEntryWithValue("you", 3);
+			this._ListDays.put(now3, words2);
+			
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 	
 //	 ================================= Thay doi ngon ngu =================================
@@ -88,6 +149,29 @@ public class CDictionary {
 		// cap nhat lai SortedMap
 		
 		this._getDataToDictionary();
+	}
+	
+	public LanguageMode GetCurrentLanguage()
+	{
+		switch (this._mode) {
+		case "en":
+			return LanguageMode.EN;
+		case "vi":
+			return LanguageMode.VI;
+
+		default:
+			return LanguageMode.EN;
+		}
+	}
+	
+	public void DisplayCurrentLanguage()
+	{
+		System.out.print("Ngôn ngữ hiện tại là: ");
+		
+		if (this._mode.equals("en"))
+			System.out.println("Tiếng Anh -> Tiếng Việt");
+		if (this._mode.equals("vi"))
+			System.out.println("Tiếng Việt -> Tiếng Anh");
 	}
 	
 	
@@ -323,7 +407,7 @@ public class CDictionary {
 
 
 //	========================== Thong ke tra cuu cac tu ===================================
-	public void SaveAField(String dataDate, String keyWord, int valueWord)
+	private void SaveAField(Date dataDate, String keyWord, int valueWord)
 	{
 		if (this._ListDays.containsKey(dataDate) == true)
 		{
@@ -345,8 +429,8 @@ public class CDictionary {
 		}
 	}
 	
-	
-	public boolean ReadHistory() 
+	// doc lich su tra cuu vao TreeSet
+	public boolean ReadHistoryFromFile() 
 	{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		
@@ -381,6 +465,16 @@ public class CDictionary {
 					
 					String dataDate = elDate.getAttribute("data");
 					
+					Date translatedDate;
+					try {
+						translatedDate = new SimpleDateFormat("dd/MM/yyyy").parse(dataDate);
+					} catch (ParseException e) {
+						continue;
+						// TODO Auto-generated catch block
+//						e.printStackTrace();
+					}
+					
+					
 					// kiem tra co cac node con la cac word hay khong
 					
 					NodeList nodeListWord = ListDate.item(i).getChildNodes();
@@ -399,9 +493,9 @@ public class CDictionary {
 								
 								int valueWord = Integer.parseInt(elWord.getTextContent());
 								
-								System.out.println(dataDate + " - " + keyWord + " - " + valueWord );
+								System.out.println(translatedDate + " - " + keyWord + " - " + valueWord );
 								
-								this.SaveAField(dataDate, keyWord, valueWord);
+								this.SaveAField(translatedDate, keyWord, valueWord);
 							}
 						}
 					}
@@ -426,11 +520,86 @@ public class CDictionary {
 		return true;
 	}
 	
+	// ghi lich su tra cuu xuong file
+	public void WriteHistoryToFile()
+	{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			
+			Document XMLDoc = builder.newDocument();
+			
+			Element rootElement = XMLDoc.createElement("History");
+			
+			for (Entry<Date, TranslatedWords> entry : this._ListDays.entrySet())
+			{
+				Element Date = XMLDoc.createElement("Date");
+				
+				DateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
+				
+				String newDateString = df.format(entry.getKey());
+				
+				Date.setAttribute("data", newDateString);
+				
+				TreeMap<String, Integer> temp = this._ListDays.get(entry.getKey()).GetListWord();
+				
+				for (Entry<String, Integer> et : temp.entrySet()) {
+					Element Word = XMLDoc.createElement("Word");
+					
+					Word.setAttribute("text", et.getKey());
+					
+					Text contentText = XMLDoc.createTextNode(et.getValue().toString());
+					
+					Word.appendChild(contentText);
+					
+					Date.appendChild(Word);
+				}
+				
+				rootElement.appendChild(Date);
+			}
+			// luu du lieu file 
+			XMLDoc.appendChild(rootElement);
+			
+			// set output file
+			DOMSource source = new DOMSource(XMLDoc);
+			
+			File outputFile = new File(this._fileHistory);
+			
+			javax.xml.transform.Result res = new StreamResult(outputFile);
+			
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			
+			Transformer transformer = transformerFactory.newTransformer();
+			
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			
+			transformer.transform(source, res);
+		}
+		catch(Exception ex)
+		{
+			
+		}
+	}
 	
-	
+	public TreeMap<Date, TranslatedWords> GetTranslatedWordsBetweenTwoDay(Date fromDate, Date toDate)
+	{
+		TreeMap<Date, TranslatedWords> ret = new TreeMap<Date, TranslatedWords>();
+
+		for(Entry<Date, TranslatedWords> entry : this._ListDays.entrySet())
+		{
+			if (!(entry.getKey().before(fromDate) || entry.getKey().after(toDate)))
+			{
+				ret.put(entry.getKey(), entry.getValue());
+			}
+		}
+		
+		return ret;
+	}
 //	=================  TEST FUNCTION ================================
 	public void PrintHistory() {
-		for (Entry<String, TranslatedWords> entry : this._ListDays.entrySet())
+		for (Entry<Date, TranslatedWords> entry : this._ListDays.entrySet())
 		{
 			System.out.println(entry.getKey() + " : ");
 			

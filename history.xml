@@ -1,7 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <History>
-	<Date data="20/03/2019">
-		<Word text="Hello">3</Word>
-		<Word text="Xin chào">2</Word>
-	</Date>
+<Date data="20/03/2019">
+<Word text="bye">2</Word>
+<Word text="new">1</Word>
+<Word text="you">5</Word>
+</Date>
+<Date data="21/03/2019">
+<Word text="hihi">6</Word>
+<Word text="kaka">3</Word>
+<Word text="you">3</Word>
+</Date>
+<Date data="21/03/2019">
+<Word text="abc">3</Word>
+<Word text="dyf">2</Word>
+<Word text="hello">5</Word>
+</Date>
 </History>
